@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .book-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .book-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            width: 250px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            background: #fff;
+        }
+        .book-title {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        .book-author {
+            font-style: italic;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book Collection</h1>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/books">Books</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/login">Login</a>
+    </nav>
+
+    <div class="book-container" id="bookList">Loading books...</div>
+
+    <script>
+        async function fetchBooks() {
+            try {
+                const response = await fetch("/api/books"); // ✅ Corrected API URL
+                if (!response.ok) throw new Error("Failed to fetch books");
+
+                const books = await response.json();
+                const bookList = document.getElementById("bookList");
+                bookList.innerHTML = ""; // Clear loading text
+
+                if (books.length === 0) {
+                    bookList.innerHTML = "<p>No books available.</p>";
+                    return;
+                }
+
+                books.forEach(book => {
+                    const bookCard = document.createElement("div");
+                    bookCard.className = "book-card";
+                    bookCard.innerHTML = `
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">by ${book.author && book.author.trim() ? book.author : "Unknown"}</div>
+                    `;
+                    bookList.appendChild(bookCard);
+                });
+            } catch (error) {
+                console.error("Error fetching books:", error);
+                document.getElementById("bookList").innerHTML = "<p>Error loading books.</p>";
+            }
+        }
+
+        fetchBooks();
+    </script>
+</body>
+</html>
